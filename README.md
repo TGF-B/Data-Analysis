@@ -5,18 +5,20 @@
 
 由于极高的便捷性，网上交易已经成为当今社会最主流的交易方式，但也正是这个”优点”，交易欺诈类的新闻总是不绝于耳。为了提高交易系统的安全性，我们可以基于过往交易的数据建立一套欺诈行为识别模型，之后若有符合欺诈特征的交易动作发生，我们可以提前采取行动，减少损失。
 
+![](https://img.shields.io/badge/python-3.8-orange?style=for-the-badge&logo=python&logoColor=orange)
+
 - 导入[数据](https://www.kaggle.com/ealaxi/paysim1/download)    
 
 ```python    
-   import pands as pd    
-   import numpy as np    
-   data=pd.read_csv("数据集路径”)   
+import pands as pd    
+import numpy as np    
+data=pd.read_csv("数据集路径”)   
 ```
 - 数据预处理
     
     - 看一下数据集的头部
     ```python    
-       data.head()
+    data.head()
     ```
     >    step      type    amount  ... newbalanceDest  isFraud  isFlaggedFraud    
     0     1   PAYMENT   9839.64  ...            0.0        0               0    
@@ -39,11 +41,11 @@
     > 10.isFraud:欺诈交易
     - 检查数据集中是否有空白项     
     ```python
-       print(data.isnull().sum())    
+    print(data.isnull().sum())    
     ```
     - 按类别求总和
     ```python
-       print(data.type.value_counts())
+    print(data.type.value_counts())
     ```
     > CASH_OUT    2237500    
     > PAYMENT     2151495   
@@ -54,9 +56,9 @@
 
     - 设置关键参数
     ```python
-       type=data['type'].value_counts() #引用上一步得到的交易类型和每种类型的交易总额
-       transactions=type.index #参数重命名
-       quantity=type.values  #参数重命名                
+    type=data['type'].value_counts() #引用上一步得到的交易类型和每种类型的交易总额
+    transactions=type.index #参数重命名
+    quantity=type.values  #参数重命名                
      ```  
 - 绘制交易类型分布扇形图
 ```python
@@ -72,15 +74,15 @@ figure.show()
   
 - 变量重命名（将各种属性都用数字代替，方便后续决策树的建立）    
 ```python
-   data["type"]=data["type"].map({"CASH_OUT:1,"PAYMENT":2,
+data["type"]=data["type"].map({"CASH_OUT:1,"PAYMENT":2,
                                   "CASH_IN":3,"TRANSFER":4,
                                   "DEBIT":5}) #提现：1，支付，入账，转账，
-   data["isFraud"]=data["isFraud"].map({0:"No Fraud",1:"Fraud"})
+data["isFraud"]=data["isFraud"].map({0:"No Fraud",1:"Fraud"})
  ```    
  - 查看数据集中所有变量（属性）与**欺诈与否**（isFraud）的相关性
  ```python
-    correlation=data.corr()#传入要检查相关性的数据集
-    print(correlation["isFraud"].sort_values(ascending=False))#将所有变量(属性）与欺诈与否（isFraud）相关性降序排列
+ correlation=data.corr()#传入要检查相关性的数据集
+ print(correlation["isFraud"].sort_values(ascending=False))#将所有变量(属性）与欺诈与否（isFraud）相关性降序排列
  ```     
  返回：     
  > isFraud           1.000000    
@@ -97,18 +99,18 @@ figure.show()
 
 - 数据集划分    
 ```python
-   from sklearn.model_selection import train_test_split
-   x=np.array(data[["type","amount","oldbalanceOrg","newbalanceOrig"]])#选出四个与欺诈相关性最强的变量（属性）构成决策树的自变量，即构建划分属性
-   y=np.array(data[["isFraud"]])
-   xtrain,xtest,ytrain,ytest=train_test_split(x,y,test_size=0.1,random_state=42)#90%的数据做训练集，10%的数据做测试集
+from sklearn.model_selection import train_test_split
+x=np.array(data[["type","amount","oldbalanceOrg","newbalanceOrig"]])#选出四个与欺诈相关性最强的变量（属性）构成决策树的自变量，即构建划分属性
+y=np.array(data[["isFraud"]])
+xtrain,xtest,ytrain,ytest=train_test_split(x,y,test_size=0.1,random_state=42)#90%的数据做训练集，10%的数据做测试集
 ```
 - 建立决策树分类器
 
 ```python
-   from sklearn.tree import DecisionTreeClassifier
-   model=DecisionTreeClassifier()
-   model.fit(xtrain,ytrain)#用90%的数据集训练决策树
-   print(model.score(xtest,ytest)#用10%的数据集验证决策树，并返回拟合度
+from sklearn.tree import DecisionTreeClassifier
+model=DecisionTreeClassifier()
+model.fit(xtrain,ytrain)#用90%的数据集训练决策树
+print(model.score(xtest,ytest)#用10%的数据集验证决策树，并返回拟合度
 ```
  很顺利地返回：    
  > 0.9997391011878755  
@@ -120,8 +122,8 @@ figure.show()
 现在我们输入一组交易信息，让模型来预测这组交易是否存在欺诈行为。
 
 ```python
-   features=np.array([[4,9000.60,9000.60,0.0]])
-   print(model.predict(features))
+features=np.array([[4,9000.60,9000.60,0.0]])
+print(model.predict(features))
 ```   
 返回：
 
