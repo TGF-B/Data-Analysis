@@ -67,7 +67,7 @@ figure=px.pie(data,
            title="Distribution of Transaction Type")
 figure.show()
  ```
- ![得到图形]（C:\Users\Administrator\Desktop\python learning\pandas learning\Payment Fraud Detection/newplot.png）
+ ![得到图形](https://github.com/TGF-B/Data-Analysis/blob/main/plot.png)
 
   
 - 变量重命名（将各种属性都用数字代替，方便后续决策树的建立）    
@@ -81,22 +81,24 @@ figure.show()
  ```python
     correlation=data.corr()#传入要检查相关性的数据集
     print(correlation["isFraud"].sort_values(ascending=False))#将所有变量(属性）与欺诈与否（isFraud）相关性降序排列
- ```        
-返回：
-    > isFraud           1.000000    
-    > amount            0.076688    
-    > isFlaggedFraud    0.044109    
-    > step              0.031578    
-    > oldbalanceOrg     0.010154    
-    > newbalanceDest    0.000535    
-    > oldbalanceDest   -0.005885    
-    > newbalanceOrig   -0.008148        
-    > Name: isFraud, dtype: float64
-显然，从相关性来看，交易额（amount），是否被标注过
+ ```     
+ 返回：     
+ > isFraud           1.000000    
+ > amount            0.076688    
+ > isFlaggedFraud    0.044109    
+ > step              0.031578    
+ > oldbalanceOrg     0.010154    
+ > newbalanceDest    0.000535    
+ > oldbalanceDest   -0.005885    
+ > newbalanceOrig   -0.008148    
+ > Name: isFraud, dtype: float64    
+    
+**显然，交易额（amount），交易人是否被标注过欺诈（isFlaggedFraud），交易步骤（step）这四个变量（属性）与交易欺诈（isFraud）的相关性最大。**
+
 - 数据集划分    
 ```python
    from sklearn.model_selection import train_test_split
-   x=np.array(data[["type","amount","oldbalanceOrg","newbalanceOrig"]])#选出四个与isFraud相关性最强的变量（属性）构成决策树的自变量（划分属性）
+   x=np.array(data[["type","amount","oldbalanceOrg","newbalanceOrig"]])#选出四个与欺诈相关性最强的变量（属性）构成决策树的自变量，即构建划分属性
    y=np.array(data[["isFraud"]])
    xtrain,xtest,ytrain,ytest=train_test_split(x,y,test_size=0.1,random_state=42)#90%的数据做训练集，10%的数据做测试集
 ```
@@ -111,7 +113,7 @@ figure.show()
  很顺利地返回：    
  > 0.9997391011878755  
 
-说明决策树模型构建地很成功。
+拟合准确度达到了99% ! 说明决策树模型构建地很成功。
  
  - 预测    
 
